@@ -1,71 +1,114 @@
+"use client";
+
 import { useState } from "react";
-import { useRouter } from "next/router"; // ADD THIS
+import { useRouter } from "next/router";
+import toast from "react-hot-toast";
 
-export default function NewCategory() {
-
+export default function AddCategory() {
   const [name, setName] = useState("");
-  const router = useRouter(); // ADD THIS
+  const [loading, setLoading] = useState(false);
 
-  const handleSubmit = async (e: any) => {
-    e.preventDefault();
+  const router = useRouter();
 
-    await fetch("http://localhost:3100/category", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ name }),
-    });
+  // ✅ ADD CATEGORY
+  const handleAdd = async () => {
+    if (!name.trim()) {
+      toast.error("Category name is required");
+      return;
+    }
 
-    router.push("/"); //  FIXED (instead of window.location.href)
+    try {
+      setLoading(true);
+
+      await fetch("http://localhost:3100/category", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ name }),
+      });
+
+      toast.success("Category added ✅");
+
+      setTimeout(() => {
+        router.push("/");
+      }, 800);
+    } catch {
+      toast.error("Failed to add category ❌");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // ✅ CANCEL
+  const handleCancel = () => {
+    router.push("/");
+  };
+
+  // ✅ ENTER KEY SUBMIT
+  const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Enter") {
+      handleAdd();
+    }
   };
 
   return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
 
-    <div className="min-h-screen bg-gray-100 text-center pt-10">
+      <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
 
-      {/* Title */}
-      <h1 className="text-xl font-bold mb-4">
-        Wallet Wizard Project - February 2026
-      </h1>
+        {/* HEADER */}
+        <div className="text-center mb-6">
+          <h2 className="text-2xl font-bold text-gray-800">
+            ➕ Add Category
+          </h2>
+          <p className="text-gray-500 text-sm">
+            Create a new category
+          </p>
+        </div>
 
-      <h2 className="font-semibold mb-4">
-        Category Page
-      </h2>
+        {/* FORM */}
+        <div className="space-y-5">
 
-      {/* Small Card */}
-      <div className="bg-gray-200 inline-block p-6 rounded-lg shadow-md">
-
-        <h3 className="mb-4 font-medium">
-          Add Category
-        </h3>
-
-        <form onSubmit={handleSubmit}>
-
-          <div className="flex items-center justify-center mb-4">
-
-            <label className="mr-2">Name :</label>
-
+          {/* NAME */}
+          <div>
+            <label className="block text-sm font-medium text-gray-600 mb-1">
+              Category Name
+            </label>
             <input
-              className="border p-1"
               value={name}
               onChange={(e) => setName(e.target.value)}
+              onKeyDown={handleKeyDown}
+              placeholder="e.g. Food, Travel, Bills"
+              autoFocus
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none transition"
             />
+          </div>
+
+          {/* BUTTONS */}
+          <div className="pt-4 space-y-3">
+
+            {/* ADD */}
+            <button
+              onClick={handleAdd}
+              disabled={loading || !name.trim()}
+              className="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+            >
+              {loading ? "Adding..." : "Add Category"}
+            </button>
+
+            {/* CANCEL */}
+            <button
+              onClick={handleCancel}
+              className="w-full border border-gray-300 text-gray-600 hover:bg-gray-100 active:scale-95 py-3 rounded-lg font-semibold transition"
+            >
+              Cancel
+            </button>
 
           </div>
 
-          <button
-            type="submit"
-            className="bg-blue-400 hover:bg-blue-500 text-black px-6 py-1 rounded w-full"
-          >
-            Add Category
-          </button>
-
-        </form>
-
+        </div>
       </div>
-
     </div>
-
   );
 }

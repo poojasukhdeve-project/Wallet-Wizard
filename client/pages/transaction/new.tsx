@@ -1,27 +1,21 @@
+"use client";
+
 import TransactionForm from "@/components/TransactionForm";
 
 export default function NewTransaction() {
 
-  const id = crypto.randomUUID();
-
   return (
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
 
-    <div className="flex justify-center pt-10">
-
-      <div className="bg-gray-100 shadow-lg rounded-xl p-6 w-full max-w-md">
-
-        {/* Title */}
-      <h1 className="text-xl font-bold mb-4">
-        Wallet Wizard Project - February 2026
-      </h1>
-
-        <h2 className="text-xl font-bold mb-4 text-center">
-          Transaction Page
-        </h2>
-
-        <TransactionForm id={id} />
-
+      {/* OPTIONAL HEADER (can remove if not needed) */}
+      <div className="absolute top-6 text-center">
+        <h1 className="text-xl font-bold text-gray-700">
+          Wallet Wizard - Add Transaction
+        </h1>
       </div>
+
+      {/* FORM (already styled) */}
+      <TransactionForm />
 
     </div>
   );
