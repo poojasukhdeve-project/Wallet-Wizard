@@ -2,12 +2,12 @@
 
 import { useState } from "react";
 import { useRouter } from "next/router";
-import CategorySelect from "./CategorySelect";
+import { supabase } from "../lib/supabase";
 import toast from "react-hot-toast";
+import CategorySelect from "./CategorySelect";
 
 export default function TransactionForm() {
   const router = useRouter();
-
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
@@ -18,6 +18,7 @@ export default function TransactionForm() {
     category_id: "",
   });
 
+  // ✅ HANDLE INPUT CHANGE
   const handleChange = (e: any) => {
     setFormData({
       ...formData,
@@ -25,9 +26,19 @@ export default function TransactionForm() {
     });
   };
 
-  // ✅ ADD TRANSACTION
+  // ✅ FIX CATEGORY CHANGE (IMPORTANT)
+  const handleCategoryChange = (value: string) => {
+    setFormData({
+      ...formData,
+      category_id: value,
+    });
+  };
+
+  // ✅ SUBMIT
   const handleSubmit = async (e: any) => {
     e.preventDefault();
+
+    console.log("Form Data:", formData); // 🔍 DEBUG
 
     if (!formData.name || !formData.amount || !formData.category_id) {
       toast.error("Please fill all required fields");
@@ -37,149 +48,145 @@ export default function TransactionForm() {
     try {
       setLoading(true);
 
-      await fetch("http://localhost:3100/transaction", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          amount: Number(formData.amount),
-        }),
-      });
+      const { data } = await supabase.auth.getUser();
+      const user = data.user;
+
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data: insertedData, error } = await supabase
+        .from("transactions")
+        .insert([
+          {
+            name: formData.name,
+            amount: Number(formData.amount),
+            date: formData.date || null,
+            description: formData.description || null,
+            category_id: formData.category_id,
+            user_id: user.id,
+          },
+        ]);
+
+      console.log("Insert Response:", insertedData, error); // 🔍 DEBUG
+
+      if (error) throw error;
 
       toast.success("Transaction added ✅");
 
-      setTimeout(() => {
-        router.push("/");
-      }, 800);
-    } catch {
-      toast.error("Failed to add transaction ❌");
+      // ✅ Reset form (optional)
+      setFormData({
+        name: "",
+        date: "",
+        description: "",
+        amount: "",
+        category_id: "",
+      });
+
+      router.push("/");
+    } catch (err: any) {
+      console.error(err);
+      toast.error(err.message || "Something went wrong ❌");
     } finally {
       setLoading(false);
     }
   };
 
-  // ✅ CANCEL
   const handleCancel = () => {
     router.push("/");
   };
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    <div className="bg-white shadow-xl rounded-2xl w-full max-w-md p-8">
 
-      <div className="bg-white shadow-xl rounded-2xl w-full max-w-2xl p-8">
+      <div className="text-center mb-6">
+        <h2 className="text-2xl font-bold text-gray-800">
+          ➕ Add Transaction
+        </h2>
+        <p className="text-gray-500 text-sm">
+          Create a new transaction
+        </p>
+      </div>
 
-        {/* HEADER */}
-        <div className="text-center mb-6">
-          <h2 className="text-2xl font-bold text-gray-800">
-            ➕ Add Transaction
-          </h2>
-          <p className="text-gray-500 text-sm">
-            Create a new transaction
-          </p>
+      <form onSubmit={handleSubmit} className="space-y-5">
+
+        {/* NAME */}
+        <div>
+          <label className="text-sm text-gray-600">Transaction Name</label>
+          <input
+            name="name"
+            value={formData.name}
+            onChange={handleChange}
+            className="w-full mt-1 border p-3 rounded-lg"
+          />
         </div>
 
- {/* FORM */}
-<form onSubmit={handleSubmit} className="space-y-6">
+        {/* DATE */}
+        <div>
+          <label className="text-sm text-gray-600">Date</label>
+          <input
+            type="date"
+            name="date"
+            value={formData.date}
+            onChange={handleChange}
+            className="w-full mt-1 border p-3 rounded-lg"
+          />
+        </div>
 
-  <div className="grid grid-cols-2 gap-6">
+        {/* DESCRIPTION */}
+        <div>
+          <label className="text-sm text-gray-600">Description</label>
+          <input
+            name="description"
+            value={formData.description}
+            onChange={handleChange}
+            className="w-full mt-1 border p-3 rounded-lg"
+          />
+        </div>
 
-    {/* NAME */}
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        Transaction Name
-      </label>
-      <input
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-        placeholder="e.g. Electricity Bill"
-        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-      />
-    </div>
+        {/* AMOUNT */}
+        <div>
+          <label className="text-sm text-gray-600">Amount ($)</label>
+          <input
+            type="number"
+            name="amount"
+            value={formData.amount}
+            onChange={handleChange}
+            className="w-full mt-1 border p-3 rounded-lg"
+          />
+        </div>
 
-    {/* DATE */}
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        Date
-      </label>
-      <input
-        type="date"
-        name="date"
-        value={formData.date}
-        onChange={handleChange}
-        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-      />
-    </div>
+        {/* CATEGORY */}
+        <div>
+          <label className="text-sm text-gray-600">Category</label>
+          <CategorySelect
+            value={formData.category_id}
+            onChange={handleCategoryChange} // ✅ FIXED
+          />
+        </div>
 
-    {/* DESCRIPTION (FULL WIDTH) */}
-    <div className="col-span-2">
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        Description
-      </label>
-      <input
-        name="description"
-        value={formData.description}
-        onChange={handleChange}
-        placeholder="Optional"
-        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
-      />
-    </div>
+        {/* BUTTONS */}
+        <div className="pt-4 space-y-3">
 
-    {/* AMOUNT */}
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        Amount ($)
-      </label>
-      <input
-        type="number"
-        name="amount"
-        value={formData.amount}
-        onChange={handleChange}
-        placeholder="e.g. 100"
-        className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-green-500 outline-none"
-      />
-    </div>
+          <button
+            type="submit"
+            disabled={loading}
+            className="w-full bg-blue-600 text-white py-3 rounded-lg"
+          >
+            {loading ? "Adding..." : "Add Transaction"}
+          </button>
 
-    {/* CATEGORY */}
-    <div>
-      <label className="block text-sm font-medium text-gray-600 mb-1">
-        Category
-      </label>
-      <div className="border border-gray-300 rounded-lg p-2 focus-within:ring-2 focus-within:ring-blue-500">
-        <CategorySelect
-          value={formData.category_id}
-          onChange={handleChange}
-        />
-      </div>
-    </div>
+          <button
+            type="button"
+            onClick={handleCancel}
+            className="w-full border py-3 rounded-lg"
+          >
+            Cancel
+          </button>
 
-  </div>
-
-  {/* BUTTONS */}
-  <div className="pt-4 flex gap-4 justify-center">
-
-    <button
-      type="submit"
-      disabled={loading}
-      className="bg-blue-600 hover:bg-blue-700 text-white px-6 py-3 rounded-lg font-semibold transition disabled:opacity-50"
-    >
-      {loading ? "Adding..." : "Add Transaction"}
-    </button>
-
-    <button
-      type="button"
-      onClick={handleCancel}
-      className="border border-gray-300 text-gray-600 hover:bg-gray-100 px-6 py-3 rounded-lg font-semibold transition"
-    >
-      Cancel
-    </button>
-
-  </div>
-
-</form>
-      </div>
+        </div>
+      </form>
     </div>
   );
 }

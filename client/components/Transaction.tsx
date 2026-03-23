@@ -1,29 +1,37 @@
-import Link from "next/link"
+import Link from "next/link";
 
-export default function Transaction({transaction,index}:any){
+export default function Transaction({ transaction, index }: any) {
+  return (
+    <tr>
 
-return(
+      <td>{index + 1}</td>
 
-<tr>
+      <td>
+        <Link href={`/transaction/${transaction.id}`}>
+          {transaction.name}
+        </Link>
+      </td>
 
-<td>{index+1}</td>
+      {/* ✅ FIX CATEGORY */}
+      <td>
+        {transaction.category?.name || "N/A"}
+      </td>
 
-<td>
-<Link href={`/transaction/${transaction.id}`}>
-{transaction.name}
-</Link>
-</td>
+      {/* ✅ FORMAT DATE */}
+      <td>
+        {new Date(transaction.date).toLocaleDateString()}
+      </td>
 
-<td>{transaction.category_name}</td>
+      {/* ✅ FORMAT AMOUNT */}
+      <td>
+        ${Number(transaction.amount).toFixed(2)}
+      </td>
 
-<td>{transaction.date}</td>
+      {/* ✅ FORMAT CREATED AT */}
+      <td>
+        {new Date(transaction.created_at).toLocaleString()}
+      </td>
 
-<td>${transaction.amount}</td>
-
-<td>{transaction.created_at}</td>
-
-</tr>
-
-)
-
+    </tr>
+  );
 }

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/router";
 import toast from "react-hot-toast";
+import { supabase } from "../../lib/supabase";
 
 export default function AddCategory() {
   const [name, setName] = useState("");
@@ -10,7 +11,7 @@ export default function AddCategory() {
 
   const router = useRouter();
 
-  // ✅ ADD CATEGORY
+  // ✅ ADD CATEGORY (SUPABASE)
   const handleAdd = async () => {
     if (!name.trim()) {
       toast.error("Category name is required");
@@ -20,13 +21,25 @@ export default function AddCategory() {
     try {
       setLoading(true);
 
-      await fetch("http://localhost:3100/category", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
+      // 🔐 GET USER
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
+      if (!user) {
+        toast.error("Not logged in");
+        router.push("/login");
+        return;
+      }
+
+      // ✅ INSERT INTO SUPABASE
+      const { error } = await supabase.from("category").insert([
+        {
+          name,
+          user_id: user.id, // 🔥 IMPORTANT
         },
-        body: JSON.stringify({ name }),
-      });
+      ]);
+
+      if (error) throw error;
 
       toast.success("Category added ✅");
 
@@ -45,7 +58,7 @@ export default function AddCategory() {
     router.push("/");
   };
 
-  // ✅ ENTER KEY SUBMIT
+  // ✅ ENTER KEY
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Enter") {
       handleAdd();
@@ -70,7 +83,6 @@ export default function AddCategory() {
         {/* FORM */}
         <div className="space-y-5">
 
-          {/* NAME */}
           <div>
             <label className="block text-sm font-medium text-gray-600 mb-1">
               Category Name
@@ -81,26 +93,23 @@ export default function AddCategory() {
               onKeyDown={handleKeyDown}
               placeholder="e.g. Food, Travel, Bills"
               autoFocus
-              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none transition"
+              className="w-full border border-gray-300 rounded-lg p-3 focus:ring-2 focus:ring-blue-500 outline-none"
             />
           </div>
 
-          {/* BUTTONS */}
           <div className="pt-4 space-y-3">
 
-            {/* ADD */}
             <button
               onClick={handleAdd}
               disabled={loading || !name.trim()}
-              className="w-full bg-blue-600 hover:bg-blue-700 active:scale-95 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
+              className="w-full bg-blue-600 hover:bg-blue-700 text-white py-3 rounded-lg font-semibold transition disabled:opacity-50"
             >
               {loading ? "Adding..." : "Add Category"}
             </button>
 
-            {/* CANCEL */}
             <button
               onClick={handleCancel}
-              className="w-full border border-gray-300 text-gray-600 hover:bg-gray-100 active:scale-95 py-3 rounded-lg font-semibold transition"
+              className="w-full border border-gray-300 text-gray-600 hover:bg-gray-100 py-3 rounded-lg font-semibold transition"
             >
               Cancel
             </button>

@@ -1,20 +1,47 @@
 "use client";
 
 import TransactionForm from "@/components/TransactionForm";
+import { useEffect, useState } from "react";
+import { useRouter } from "next/router";
+import { supabase } from "../../lib/supabase";
 
 export default function NewTransaction() {
+  const router = useRouter();
+  const [loading, setLoading] = useState(true);
+
+  // 🔐 AUTH CHECK
+  useEffect(() => {
+    const checkUser = async () => {
+      const { data } = await supabase.auth.getUser();
+
+      if (!data.user) {
+        router.push("/login");
+      } else {
+        setLoading(false);
+      }
+    };
+
+    checkUser();
+  }, []);
+
+  // ⏳ LOADING
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <p className="text-gray-500">Loading...</p>
+      </div>
+    );
+  }
 
   return (
-    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gray-100 flex flex-col items-center justify-center p-6">
 
-      {/* OPTIONAL HEADER (can remove if not needed) */}
-      <div className="absolute top-6 text-center">
-        <h1 className="text-xl font-bold text-gray-700">
-          Wallet Wizard - Add Transaction
-        </h1>
-      </div>
+      {/* ✅ HEADER (FIXED POSITIONING) */}
+      <h1 className="text-2xl font-bold text-gray-700 mb-6">
+        Wallet Wizard 
+      </h1>
 
-      {/* FORM (already styled) */}
+      {/* ✅ FORM */}
       <TransactionForm />
 
     </div>

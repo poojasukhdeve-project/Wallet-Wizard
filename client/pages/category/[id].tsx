@@ -3,6 +3,7 @@
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import toast from "react-hot-toast";
+import { supabase } from "../../lib/supabase";
 
 export default function CategoryDetail() {
   const router = useRouter();
@@ -11,30 +12,59 @@ export default function CategoryDetail() {
   const [name, setName] = useState("");
   const [loading, setLoading] = useState(false);
 
-  // ✅ FETCH CATEGORY DATA
+  // ✅ FETCH CATEGORY FROM SUPABASE
   useEffect(() => {
-    if (!id) return;
+    const fetchCategory = async () => {
+      if (!id) return;
 
-    fetch("http://localhost:3100/category")
-      .then((res) => res.json())
-      .then((data) => {
-        const c = data.find((item: any) => item.id == id);
-        if (c) setName(c.name);
-      });
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
+      if (!user) {
+        router.push("/login");
+        return;
+      }
+
+      const { data, error } = await supabase
+        .from("category")
+        .select("*")
+        .eq("id", id)
+        .eq("user_id", user.id)
+        .single();
+
+      if (error) {
+        toast.error("Failed to load category ❌");
+        return;
+      }
+
+      if (data) {
+        setName(data.name);
+      }
+    };
+
+    fetchCategory();
   }, [id]);
 
-  // ✅ UPDATE CATEGORY
+  // ✅ UPDATE CATEGORY (SUPABASE)
   const handleUpdate = async () => {
     try {
       setLoading(true);
 
-      await fetch(`http://localhost:3100/category/${id}`, {
-        method: "PUT",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ name }),
-      });
+      const { data: userData } = await supabase.auth.getUser();
+      const user = userData.user;
+
+      if (!user) {
+        toast.error("Not authorized");
+        return;
+      }
+
+      const { error } = await supabase
+        .from("category")
+        .update({ name })
+        .eq("id", id)
+        .eq("user_id", user.id);
+
+      if (error) throw error;
 
       toast.success("Category updated ✅");
 
@@ -87,7 +117,6 @@ export default function CategoryDetail() {
           {/* BUTTONS */}
           <div className="pt-4 space-y-3">
 
-            {/* UPDATE */}
             <button
               onClick={handleUpdate}
               disabled={loading}
@@ -96,7 +125,6 @@ export default function CategoryDetail() {
               {loading ? "Updating..." : "Update Category"}
             </button>
 
-            {/* CANCEL */}
             <button
               onClick={handleCancel}
               className="w-full border border-gray-300 text-gray-600 hover:bg-gray-100 py-3 rounded-lg font-semibold transition"
