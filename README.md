@@ -57,3 +57,17 @@ A modern **full-stack personal finance management application** that helps users
 ## 🧠 Architecture
 
 This project uses a **Backend-as-a-Service (BaaS)** approach:
+wallet-wizard/
+│
+├── client/ # Next.js frontend
+│ ├── components/ # UI components
+│ ├── pages/ # Application routes
+│ ├── lib/ # Supabase configuration
+│ ├── styles/ # Styling
+│ └── public/ # Static assets
+│
+├── server/ (optional) # Express backend (not used in final deployment)
+│
+├── .env.local # Environment variables (local only)
+├── package.json
+└── README.md
