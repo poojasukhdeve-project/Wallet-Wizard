@@ -56,8 +56,6 @@ A modern **full-stack personal finance management application** that helps users
 
 ## 🧠 Architecture
 
-## 🧠 Architecture
-
 This project uses a **Backend-as-a-Service (BaaS)** approach with Supabase.
 wallet-wizard/
 │
