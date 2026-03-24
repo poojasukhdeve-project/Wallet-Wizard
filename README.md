@@ -1,101 +1,59 @@
-💰 Wallet Wizard
+# 💰 Wallet Wizard
 
-A full-stack personal finance management application that helps users track expenses, manage categories, and visualize spending patterns.
+A modern **full-stack personal finance management application** that helps users track expenses, manage categories, and analyze spending behavior with a clean and intuitive dashboard.
 
-🚀 Live Demo
+---
+
+## 🚀 Live Demo
 
 🔗 https://wallet-wizard-ten.vercel.app/
 
-📌 Features
-🔐 User Authentication (Register/Login)
-💸 Add, Edit, and Delete Transactions
-🗂️ Category Management
-📊 Dashboard with Spending Overview
-📈 Visual Analytics (Charts & Trends)
-☁️ Real-time database integration using Supabase
-🏗️ Tech Stack
-Frontend
-Next.js (React Framework)
-TypeScript
-Tailwind CSS (or your styling system)
-Backend / Database
-Supabase (PostgreSQL + Auth + APIs)
-Deployment
-Vercel (Frontend Hosting)
-📂 Project Structure
-wallet-wizard/
-│
-├── client/                # Next.js frontend
-│   ├── components/        # UI components
-│   ├── pages/             # Routes
-│   ├── lib/               # Supabase config
-│   └── styles/
-│
-├── server/ (optional)     # Express backend (not used in final deployment)
-│
-├── .env.local             # Environment variables
-└── README.md
-⚙️ Environment Variables
+---
 
-Create a .env.local file inside the client folder:
+## 📌 Features
 
-NEXT_PUBLIC_SUPABASE_URL=your_supabase_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+- 🔐 **Authentication**
+  - User Registration & Login
+  - Secure authentication using Supabase
 
-👉 These values can be found in your Supabase project settings.
+- 💸 **Transaction Management**
+  - Add new transactions
+  - View transaction list
+  - Categorize expenses
 
-🛠️ Installation & Setup
-1. Clone the repository
-git clone https://github.com/your-username/wallet-wizard.git
-cd wallet-wizard/client
-2. Install dependencies
-npm install
-3. Run the development server
-npm run dev
+- 🗂️ **Category Management**
+  - Create and manage categories
+  - Organize spending efficiently
 
-App will run on:
+- 📊 **Dashboard**
+  - Overview of total spending
+  - Transactions summary
+  - Category insights
 
-http://localhost:3000
-🚀 Deployment
-Frontend (Vercel)
-Import project from GitHub
-Set root directory: client
-Add environment variables
-Click Deploy
-🧠 Architecture Decision
+- 📈 **Analytics**
+  - Spending trends visualization
+  - Category-based analysis
 
-Instead of using a traditional Express backend, this project uses:
+- ☁️ **Cloud Database**
+  - Real-time data storage using Supabase (PostgreSQL)
 
-👉 Supabase as Backend-as-a-Service (BaaS)
+---
 
-Benefits:
+## 🏗️ Tech Stack
 
-No need for separate backend deployment
-Built-in authentication
-Real-time database
-Scalable and secure
-🧪 Testing Checklist
- User can register and login
- Transactions can be added
- Categories can be created
- Data persists in database
- Dashboard updates correctly
-📸 Screenshots
+### Frontend
+- Next.js (React Framework)
+- TypeScript
+- CSS / Tailwind CSS
 
-(Optional: Add screenshots here for portfolio impact)
+### Backend / Database
+- Supabase (PostgreSQL + Authentication + APIs)
 
-🌟 Future Improvements
-✏️ Edit/Delete transactions
-📊 Advanced analytics & charts
-🌙 Dark mode
-📱 Mobile responsiveness improvements
-🔔 Notifications
-👩‍💻 Author
+### Deployment
+- Vercel (Frontend Hosting)
 
-Pooja Sukhdeve
-Master’s in Computer Science – Boston University
+---
 
-⭐ Acknowledgements
-Supabase for backend services
-Vercel for deployment
-Next.js for frontend framework
+## 🧠 Architecture
+
+This project uses a **Backend-as-a-Service (BaaS)** approach:
