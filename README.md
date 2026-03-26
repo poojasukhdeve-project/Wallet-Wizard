@@ -62,6 +62,14 @@ This project uses a **Backend-as-a-Service (BaaS)** approach with Supabase.
 - ↓
 - Supabase (Auth + Database + API)
 
+### Why Supabase?
+- No need for custom backend (Express)  
+- Built-in authentication  
+- Scalable PostgreSQL database  
+- Faster development  
+
+---
+
 wallet-wizard/
 │
 ├── client/                # Next.js frontend
