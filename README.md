@@ -58,9 +58,9 @@ A modern **full-stack personal finance management application** that helps users
 
 This project uses a **Backend-as-a-Service (BaaS)** approach with Supabase.
 
---Frontend (Next.js on Vercel)
---↓
---Supabase (Auth + Database + API)
+- Frontend (Next.js on Vercel)
+- ↓
+- Supabase (Auth + Database + API)
 
 wallet-wizard/
 │
