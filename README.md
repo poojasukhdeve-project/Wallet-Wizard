@@ -68,8 +68,7 @@ This project uses a **Backend-as-a-Service (BaaS)** approach with Supabase.
 - Scalable PostgreSQL database  
 - Faster development  
 
----
-
+```
 wallet-wizard/
 │
 ├── client/                # Next.js frontend
@@ -84,5 +83,4 @@ wallet-wizard/
 ├── .env.local             # Environment variables (local only)
 ├── package.json
 └── README.md
-
----
+```
