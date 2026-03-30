@@ -84,3 +84,5 @@ wallet-wizard/
 ├── .env.local             # Environment variables (local only)
 ├── package.json
 └── README.md
+
+---
