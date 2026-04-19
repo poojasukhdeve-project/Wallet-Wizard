@@ -158,9 +158,43 @@ This project goes beyond a basic CRUD app by solving real-world engineering chal
 ```bash
 git clone https://github.com/poojasukhdeve-project/Wallet-Wizard.git
 cd Wallet-Wizard
-
+```
 ### 2. Install dependencies
 ```bash
 npm install
 ```
+### 3. Setup environment variables
+```bash
+Create a .env.local file:
+NEXT_PUBLIC_SUPABASE_URL=your_url
+NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
+```
+### 4. Run the app
+```bash
+npm run dev
+```
+### 5. Open in browser
+```bash
+http://localhost:3000
+```
+---
 
+## 🚀 Future Enhancements
+
+- Budget tracking & spending limits  
+- AI chatbot for financial insights  
+- Improved UI/UX  
+- Advanced analytics & reporting  
+- Better authentication & validation  
+
+---
+
+## 👩‍💻 Author
+
+**Pooja Sukhdeve**  
+MS in Computer Science – Boston University  
+
+---
+## 📄 License
+
+This project is for educational purposes as part of the Build Fellowship program.
