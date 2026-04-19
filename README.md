@@ -158,12 +158,9 @@ This project goes beyond a basic CRUD app by solving real-world engineering chal
 ```bash
 git clone https://github.com/poojasukhdeve-project/Wallet-Wizard.git
 cd Wallet-Wizard
----
+
 ### 2. Install dependencies
+```bash
 npm install
+```
 
-### 3. Setup environment variables
-- Create a .env.local file:
-
-NEXT_PUBLIC_SUPABASE_URL=your_url
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_key
